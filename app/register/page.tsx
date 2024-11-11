@@ -1,47 +1,124 @@
 "use client";
 import React from 'react';
+import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { FaEnvelope, FaLock, FaUserPlus, FaKey } from 'react-icons/fa';
 
 const Register = () => {
+  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const password = watch('password');
+  const confirmPassword = watch('confirmPassword');
+  
+  // Regex for special characters in password
+  const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+  const onSubmit = (data: unknown) => {
+    console.log(data);
+  };
+
+  // Check if the password is valid (has special character and length >= 6)
+  const passwordValid = password && password.length >= 6 && specialCharRegex.test(password);
+  const confirmPasswordValid = confirmPassword && confirmPassword === password;
+
   return (
     <motion.div
-      className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-[#161616] to-[#101010] text-white px-6"
+      className="min-h-screen flex flex-col justify-center items-center bg-[#161616] text-white px-6"
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       <h2 className="text-3xl font-bold mb-8">Register</h2>
-      <form className="w-full max-w-sm bg-[#1C1C1C] p-6 rounded-lg shadow-lg">
-        <motion.input
-          type="text"
-          placeholder="Username"
-          className="w-full px-4 py-2 mb-4 bg-[#222] text-white rounded focus:outline-none focus:bg-[#2a2a2a] transition"
-          whileFocus={{ scale: 1.03 }}
-        />
-        <motion.input
-          type="email"
-          placeholder="Email"
-          className="w-full px-4 py-2 mb-4 bg-[#222] text-white rounded focus:outline-none focus:bg-[#2a2a2a] transition"
-          whileFocus={{ scale: 1.03 }}
-        />
-        <motion.input
-          type="password"
-          placeholder="Password"
-          className="w-full px-4 py-2 mb-4 bg-[#222] text-white rounded focus:outline-none focus:bg-[#2a2a2a] transition"
-          whileFocus={{ scale: 1.03 }}
-        />
-        <motion.button
-          className="w-full bg-blue-500 py-2 rounded hover:bg-blue-600 transition transform hover:scale-105 active:scale-95 shadow-lg"
-          whileHover={{ boxShadow: "0px 0px 10px rgba(59, 130, 246, 0.6)" }}
-          whileTap={{ scale: 0.95 }}
+      <form className="w-full max-w-sm space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        
+        {/* Email Input */}
+        <motion.div
+          className="flex items-center bg-[#222] rounded px-3 py-2"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          Register
+          <FaEnvelope className="text-gray-400 mr-3" />
+          <input
+            type="email"
+            placeholder="Email"
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: 'Invalid email address',
+              },
+            })}
+            className="w-full bg-transparent text-white focus:outline-none"
+          />
+        </motion.div>
+        {errors.email && <p className="text-red-500 text-xs">{errors.email?.message?.toString()}</p>}
+
+        {/* Password Input */}
+        <motion.div
+          className="flex items-center bg-[#222] rounded px-3 py-2"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          <FaLock className="text-gray-400 mr-3" />
+          <input
+            type="password"
+            placeholder="Password"
+            {...register('password', {
+              required: 'Password is required',
+              minLength: {
+                value: 6,
+                message: 'Password must be at least 6 characters long',
+              },
+            })}
+            className={`w-full bg-transparent text-white focus:outline-none ${passwordValid ? 'border-2 border-green-500' : ''}`}
+          />
+        </motion.div>
+        {errors.password && <p className="text-red-500 text-xs">{errors.password?.message?.toString()}</p>}
+
+        {/* Confirm Password Input */}
+        <motion.div
+          className="flex items-center bg-[#222] rounded px-3 py-2"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <FaKey className="text-gray-400 mr-3" />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            {...register('confirmPassword', {
+              required: 'Confirm your password',
+              validate: (value) =>
+                value === password || 'Passwords do not match',
+            })}
+            className={`w-full bg-transparent text-white focus:outline-none ${confirmPasswordValid ? 'border-2 border-green-500' : ''}`}
+          />
+        </motion.div>
+        {errors.confirmPassword && (
+          <p className="text-red-500 text-xs">{errors.confirmPassword?.message?.toString()}</p>
+        )}
+
+        {/* Register Button */}
+        <motion.button
+          className="w-full bg-blue-500 py-2 rounded flex items-center justify-center hover:bg-blue-600 transition"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <FaUserPlus className="mr-2" /> Register
         </motion.button>
       </form>
-      <p className="mt-4 text-gray-400">
+
+      {/* Error Message for Password Mismatch */}
+      {password && confirmPassword && password !== confirmPassword && (
+        <p className="text-red-500 mt-2">Passwords do not match!</p>
+      )}
+
+      <p className="mt-4">
         Already have an account?{' '}
-        <Link className="text-blue-400 hover:text-blue-500 transition" href={'/login'}>
+        <Link className="text-blue-400" href={'/login'}>
           Login
         </Link>
       </p>
