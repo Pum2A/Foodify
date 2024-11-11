@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 const Welcome = () => {
   // Stan do kontrolowania, która sekcja jest aktualnie widoczna
@@ -11,6 +12,7 @@ const Welcome = () => {
   const handleNextSection = () => {
     setSectionIndex(prevIndex => prevIndex + 1);
   };
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-[#161616] flex items-center justify-center p-6 relative">
@@ -92,12 +94,21 @@ const Welcome = () => {
             <p className="text-lg mb-4">
               Create an account or log in to continue.
             </p>
+            <div className='flex gap-5'>
+
             <button
-              onClick={() => alert("Redirecting to Register/Login")}
+              onClick={() => router.push('/register')}
+              className="flex m-auto items-center bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 transition duration-300 transform hover:scale-105 shadow-xl mt-8 active:scale-95 active:bg-blue-700"
+              >
+              Register 
+            </button>
+            <button
+              onClick={() => router.push('/login')}
               className="flex m-auto items-center bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-blue-600 transition duration-300 transform hover:scale-105 shadow-xl mt-8 active:scale-95 active:bg-blue-700"
             >
-              Go to Register/Login <FaArrowRight className="ml-2" />
+              Login 
             </button>
+              </div>
           </div>
         )}
       </motion.div>
