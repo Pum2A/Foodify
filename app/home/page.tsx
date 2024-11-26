@@ -1,28 +1,27 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaCarrot, FaListAlt, FaUtensils, FaTimes } from "react-icons/fa";
-import LoadingSpinner from "../components/LoadingSpinner"; // Importuj spinner
+import { FaCarrot, FaTimes, FaUtensils } from "react-icons/fa";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 type ItemType = "ingredient" | "diet" | "cuisine";
 
 const Home = () => {
-  // Stan dla inputów i przechowywania elementów
   const [inputs, setInputs] = useState<{ [key in ItemType]: string }>({
     ingredient: "",
     diet: "",
     cuisine: "",
   });
+
   const [items, setItems] = useState<{ [key in ItemType]: string[] }>({
     ingredient: [],
     diet: [],
     cuisine: [],
   });
-  const [recipes, setRecipes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false); // Stan ładowania
-  const [error, setError] = useState<string | null>(null);
 
-  // Funkcja obsługująca zmianę inputów, dodawanie i usuwanie elementów
+  const [recipes, setRecipes] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // Add loading state
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     type: ItemType
@@ -57,33 +56,25 @@ const Home = () => {
   };
 
   const handleGenerateRecipes = async () => {
-    setLoading(true); // Rozpocznij ładowanie
+    setLoading(true); // Set loading to true
+    const response = await fetch("/api/generateRecipe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ingredients: items.ingredient,
+        diet: items.diet[0] || "any diet",
+        cuisine: items.cuisine[0] || "any cuisine",
+      }),
+    });
 
-    try {
-      const response = await fetch("/api/generateRecipe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ingredients: items.ingredient, // Lista składników
-          diet: items.diet[0] || "any diet", // Pierwsza dieta z listy
-          cuisine: items.cuisine[0] || "any cuisine", // Pierwsza kuchnia z listy
-        }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setRecipes(data.recipes); // Ustawiamy przepisy w stanie
-      } else {
-        console.error("Error generating recipes:", data.message);
-        setError(data.message || "Something went wrong");
-      }
-    } catch (error) {
-      setError("Error fetching recipe");
-      console.error(error);
-    } finally {
-      setLoading(false); // Zakończ ładowanie
+    const data = await response.json();
+    setLoading(false); // Set loading to false
+    if (response.ok) {
+      setRecipes(data.recipes);
+    } else {
+      console.error("Error generating recipes:", data.message);
     }
   };
 
@@ -95,7 +86,7 @@ const Home = () => {
         suggest a perfect recipe!
       </p>
       <form className="w-full max-w-lg space-y-6">
-        {["ingredient", "diet", "cuisine"].map((type, index) => (
+        {["ingredient", "diet", "cuisine"].map((type) => (
           <motion.div
             key={type}
             className="flex items-center bg-[#222] rounded px-3 py-2"
@@ -103,7 +94,7 @@ const Home = () => {
             {type === "ingredient" && (
               <FaCarrot className="text-gray-400 mr-3" />
             )}
-            {type === "diet" && <FaListAlt className="text-gray-400 mr-3" />}
+            {type === "diet" && <FaTimes className="text-gray-400 mr-3" />}
             {type === "cuisine" && (
               <FaUtensils className="text-gray-400 mr-3" />
             )}
@@ -133,9 +124,9 @@ const Home = () => {
                 key={type}
                 className="flex flex-wrap gap-2 bg-[#222] p-4 rounded-md"
               >
-                <h3 className="text-lg font-semibold mb-2 w-full">{`${
-                  type.charAt(0).toUpperCase() + type.slice(1)
-                }s:`}</h3>
+                <h3 className="text-lg font-semibold mb-2 w-full">
+                  {type.charAt(0).toUpperCase() + type.slice(1)}s:
+                </h3>
                 {items[type as ItemType].map((item) => (
                   <div
                     key={item}
@@ -144,9 +135,9 @@ const Home = () => {
                     <span className="mr-2">{item}</span>
                     <button
                       type="button"
-                      onClick={() =>
+                      onClick={(e) =>
                         handleAddOrRemoveItem(
-                          {} as React.FormEvent,
+                          e,
                           type as ItemType,
                           "remove",
                           item
@@ -170,11 +161,8 @@ const Home = () => {
           <FaUtensils className="mr-2" /> Generate Recipe
         </motion.button>
       </form>
-      <div className="my-4">
-        {loading && <LoadingSpinner />} {/* Wyświetl spinner ładowania */}
-      </div>
-      {error && <div>{error}</div>}
-      {recipes.length > 0 && !loading && (
+      <div className="my-4">{loading && <LoadingSpinner />} </div>
+      {recipes.length > 0 && (
         <div className="mt-8">
           <h3 className="text-2xl font-semibold mb-4">Generated Recipes:</h3>
           {recipes.map((recipe, index) => (
