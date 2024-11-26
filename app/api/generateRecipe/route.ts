@@ -9,24 +9,15 @@ export async function POST(req: NextRequest) {
   const { ingredients, diet, cuisine } = await req.json();
 
   const prompt = `
-  Create a recipe for "Chicken and Tomato Casserole" with the following requirements:
-1. **Recipe Title**: The title of the recipe should be "Chicken and Tomato Casserole."
-2. **Introduction**: Write a brief introduction (1-2 sentences) that describes the dish and its main flavors.
-3. **Ingredients**: Provide a bulleted list of the ingredients. Ingredients must include: chicken and tomato.
-4. **Instructions**: Write clear, step-by-step cooking instructions. Ensure there is no repetition in the steps. For each step:
-    - Describe what to do (e.g., cook, mix, simmer, etc.)
-    - Make sure each step follows logically from the previous one.
-    - The instructions should be easy to follow.
-5. **Additional Tips (Optional)**: If applicable, provide any tips or variations for making the recipe.
-
+  The user has provided the following ingredients: ${ingredients}, preferred diet type: ${diet}, and preferred cuisine type: ${cuisine}. Based on this information, suggest a recipe that meets all the requirements. Ensure the recipe is easy to make, healthy (in line with the diet), and authentic to the specified cuisine. Provide the recipe name, a list of ingredients, preparation instructions, and any suggestions for ingredient substitutions in case any are difficult to find or can be replaced.
 `;
 
 
   try {
     const response = await hf.textGeneration({
-      model: "google/flan-t5-large",
+      model: "Qwen/Qwen2.5-Coder-32B-Instruct",
       inputs: prompt,
-      parameters: { max_new_tokens: 250, temperature: 0.5 }, // Zmniejszyliśmy max_new_tokens do 250
+      parameters: { max_new_tokens: 250, temperature: 1 }, // Zmniejszyliśmy max_new_tokens do 250
     });
     
 
