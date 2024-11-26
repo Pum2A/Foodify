@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-// Define the type for the recipe
+import LoadingSpinner from "./LoadingSpinner";
 interface Recipe {
   title: string;
   introduction: string;
@@ -10,7 +9,7 @@ interface Recipe {
 }
 
 const RecipeComponent = () => {
-  const [recipe, setRecipe] = useState<Recipe | null>(null); // Specify that recipe can be null or of type 'Recipe'
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +31,7 @@ const RecipeComponent = () => {
     fetchRecipe();
   }, []); // Empty array means this will run only once after the first render
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />; // Wyświetlanie spinnera podczas ładowania
   if (error) return <div>{error}</div>;
 
   return (

@@ -1,9 +1,8 @@
-// pages/home.tsx
-"use client"; // To oznacza, że ten komponent będzie działał po stronie klienta
-
+"use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaCarrot, FaListAlt, FaUtensils, FaTimes } from "react-icons/fa";
+import LoadingSpinner from "../components/LoadingSpinner"; // Importuj spinner
 
 type ItemType = "ingredient" | "diet" | "cuisine";
 
@@ -20,6 +19,8 @@ const Home = () => {
     cuisine: [],
   });
   const [recipes, setRecipes] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false); // Stan ładowania
+  const [error, setError] = useState<string | null>(null);
 
   // Funkcja obsługująca zmianę inputów, dodawanie i usuwanie elementów
   const handleInputChange = (
@@ -56,23 +57,33 @@ const Home = () => {
   };
 
   const handleGenerateRecipes = async () => {
-    const response = await fetch("/api/generateRecipe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ingredients: items.ingredient, // Lista składników
-        diet: items.diet[0] || "any diet", // Pierwsza dieta z listy
-        cuisine: items.cuisine[0] || "any cuisine", // Pierwsza kuchnia z listy
-      }),
-    });
+    setLoading(true); // Rozpocznij ładowanie
 
-    const data = await response.json();
-    if (response.ok) {
-      setRecipes(data.recipes); // Ustawiamy przepisy w stanie
-    } else {
-      console.error("Error generating recipes:", data.message);
+    try {
+      const response = await fetch("/api/generateRecipe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ingredients: items.ingredient, // Lista składników
+          diet: items.diet[0] || "any diet", // Pierwsza dieta z listy
+          cuisine: items.cuisine[0] || "any cuisine", // Pierwsza kuchnia z listy
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setRecipes(data.recipes); // Ustawiamy przepisy w stanie
+      } else {
+        console.error("Error generating recipes:", data.message);
+        setError(data.message || "Something went wrong");
+      }
+    } catch (error) {
+      setError("Error fetching recipe");
+      console.error(error);
+    } finally {
+      setLoading(false); // Zakończ ładowanie
     }
   };
 
@@ -83,7 +94,6 @@ const Home = () => {
         Choose your ingredients, dietary preferences, and let our AI chef
         suggest a perfect recipe!
       </p>
-
       <form className="w-full max-w-lg space-y-6">
         {["ingredient", "diet", "cuisine"].map((type, index) => (
           <motion.div
@@ -160,8 +170,11 @@ const Home = () => {
           <FaUtensils className="mr-2" /> Generate Recipe
         </motion.button>
       </form>
-
-      {recipes.length > 0 && (
+      <div className="my-4">
+        {loading && <LoadingSpinner />} {/* Wyświetl spinner ładowania */}
+      </div>
+      {error && <div>{error}</div>}
+      {recipes.length > 0 && !loading && (
         <div className="mt-8">
           <h3 className="text-2xl font-semibold mb-4">Generated Recipes:</h3>
           {recipes.map((recipe, index) => (
