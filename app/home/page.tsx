@@ -20,7 +20,7 @@ const Home = () => {
   });
 
   const [recipes, setRecipes] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(false); // Add loading state
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -56,7 +56,7 @@ const Home = () => {
   };
 
   const handleGenerateRecipes = async () => {
-    setLoading(true); // Set loading to true
+    setLoading(true);
     const response = await fetch("/api/generateRecipe", {
       method: "POST",
       headers: {
@@ -70,7 +70,7 @@ const Home = () => {
     });
 
     const data = await response.json();
-    setLoading(false); // Set loading to false
+    setLoading(false);
     if (response.ok) {
       setRecipes(data.recipes);
     } else {
@@ -79,8 +79,13 @@ const Home = () => {
   };
 
   return (
-    <motion.div className="min-h-screen flex flex-col justify-center items-center bg-[#161616] text-white px-6">
-      <h2 className="text-4xl font-bold mb-8">Create Your Recipe</h2>
+    <motion.div
+      className="min-h-screen flex flex-col justify-center items-center bg-[#161616] text-white px-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h2 className="text-4xl font-bold mb-8 text-center">Create Your Recipe</h2>
       <p className="mb-6 text-gray-400 text-center max-w-md">
         Choose your ingredients, dietary preferences, and let our AI chef
         suggest a perfect recipe!
@@ -89,20 +94,18 @@ const Home = () => {
         {["ingredient", "diet", "cuisine"].map((type) => (
           <motion.div
             key={type}
-            className="flex items-center bg-[#222] rounded px-3 py-2"
+            className="flex items-center bg-[#222] rounded-lg px-4 py-3 shadow-md"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {type === "ingredient" && (
-              <FaCarrot className="text-gray-400 mr-3" />
-            )}
-            {type === "diet" && <FaTimes className="text-gray-400 mr-3" />}
-            {type === "cuisine" && (
-              <FaUtensils className="text-gray-400 mr-3" />
-            )}
+            {type === "ingredient" && <FaCarrot className="text-orange-500 mr-3" />}
+            {type === "diet" && <FaTimes className="text-green-500 mr-3" />}
+            {type === "cuisine" && <FaUtensils className="text-yellow-500 mr-3" />}
             <input
               type="text"
               placeholder={`${
                 type.charAt(0).toUpperCase() + type.slice(1)
-              } (e.g., chicken, tomatoes)`}
+              } (e.g., chicken, vegan, Italian)`}
               value={inputs[type as ItemType]}
               onChange={(e) => handleInputChange(e, type as ItemType)}
               className="w-full bg-transparent text-white focus:outline-none"
@@ -156,27 +159,28 @@ const Home = () => {
         <motion.button
           onClick={handleGenerateRecipes}
           type="button"
-          className="w-full bg-blue-500 py-2 rounded flex items-center justify-center hover:bg-blue-600 transition"
+          className="w-full bg-blue-500 py-2 rounded-lg flex items-center justify-center hover:bg-blue-600 transition"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           <FaUtensils className="mr-2" /> Generate Recipe
         </motion.button>
       </form>
-      <div className="my-4">{loading && <LoadingSpinner />} </div>
+      <div className="my-4">{loading && <LoadingSpinner text="Generating your recipe..." /> }</div>
       {recipes.length > 0 && (
-  <div className="my-8 w-full max-w-3xl mx-auto">
-    <h3 className="text-2xl font-semibold mb-4 text-center">Your Recipe</h3>
-    <div className="bg-[#222] p-6 rounded-lg shadow-lg">
-      <ol className="list-decimal list-inside text-gray-300 leading-relaxed">
-        {recipes.map((step, index) => (
-          <li key={index} className="mb-2">
-            {step.trim()}
-          </li>
-        ))}
-      </ol>
-    </div>
-  </div>
-)}
-
+        <div className="my-8 w-full max-w-3xl mx-auto">
+          <h3 className="text-2xl font-semibold mb-4 text-center">Your Recipe</h3>
+          <div className="bg-[#222] p-6 rounded-lg shadow-lg">
+            <ol className="list-decimal list-inside text-gray-300 leading-relaxed">
+              {recipes.map((step, index) => (
+                <li key={index} className="mb-2">
+                  {step.trim()}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };
