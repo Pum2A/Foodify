@@ -163,15 +163,20 @@ const Home = () => {
       </form>
       <div className="my-4">{loading && <LoadingSpinner />} </div>
       {recipes.length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-2xl font-semibold mb-4">Generated Recipes:</h3>
-          {recipes.map((recipe, index) => (
-            <div key={index} className="mb-4 bg-[#333] p-4 rounded-md">
-              <p>{recipe}</p>
-            </div>
-          ))}
-        </div>
-      )}
+  <div className="my-8 w-full max-w-3xl mx-auto">
+    <h3 className="text-2xl font-semibold mb-4 text-center">Your Recipe</h3>
+    <div className="bg-[#222] p-6 rounded-lg shadow-lg">
+      <ol className="list-decimal list-inside text-gray-300 leading-relaxed">
+        {recipes.map((step, index) => (
+          <li key={index} className="mb-2">
+            {step.trim()}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+)}
+
     </motion.div>
   );
 };

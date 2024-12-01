@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const response = await hf.textGeneration({
       model: "Qwen/Qwen2.5-Coder-32B-Instruct",
       inputs: prompt,
-      parameters: { max_new_tokens: 1000, temperature: 1 }, // Zmniejszyliśmy max_new_tokens do 250
+      parameters: { max_new_tokens: 2000, temperature: 1 }, // Zmniejszyliśmy max_new_tokens do 250
     });
     
 
