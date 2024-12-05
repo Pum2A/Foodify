@@ -1,20 +1,46 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaEnvelope, FaLock, FaUserPlus, FaKey } from 'react-icons/fa';
-
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import LoadingSpinner from '../components/LoadingSpinner';
 const Register = () => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const password = watch('password');
   const confirmPassword = watch('confirmPassword');
-  
+  const router = useRouter();
+
   // Regex for special characters in password
   const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
-  const onSubmit = (data: unknown) => {
-    console.log(data);
+  const onSubmit = async (data: unknown) => {
+    setIsLoading(true);
+    setErrorMessage(null); // Resetujemy błąd przed wysyłką
+
+    try {
+      const response = await axios.post('/api/register', data);
+      if (response.status === 200) {
+        console.log('Registration successful', response.data);
+        router.push('/login'); // Przekierowanie po rejestracji
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Registration failed', error);
+      // Logowanie błędu
+      if (error.response) {
+        console.error('Error response:', error.response);
+        setErrorMessage(error.response?.data?.message || 'An error occurred during registration');
+      } else {
+        setErrorMessage('An unexpected error occurred.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Check if the password is valid (has special character and length >= 6)
@@ -106,8 +132,9 @@ const Register = () => {
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.3 }}
+          disabled={isLoading}
         >
-          <FaUserPlus className="mr-2" /> Register
+          {isLoading ? <LoadingSpinner /> : <><FaUserPlus className="mr-2" /> Register</>}
         </motion.button>
       </form>
 
@@ -122,6 +149,8 @@ const Register = () => {
           Login
         </Link>
       </p>
+
+      {errorMessage && <p className="text-red-500 text-xs mt-4">{errorMessage}</p>}
     </motion.div>
   );
 };

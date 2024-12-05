@@ -1,16 +1,36 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
-
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import LoadingSpinner from '../components/LoadingSpinner';
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
 
-  const onSubmit = (data: FieldValues) => {
-    // tutaj wyślij dane logowania do backendu
-    console.log(data);
+  const onSubmit = async (data: FieldValues) => {
+    setIsLoading(true);
+    setErrorMessage(null); // Resetujemy błąd przed wysyłką
+
+    try {
+      const response = await axios.post('/api/login', data);
+
+      if (response.status === 200) {
+        console.log('Login successful', response.data);
+        router.push('/home'); // Przekierowanie po udanym logowaniu
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Login failed', error);
+      setErrorMessage(error.response?.data?.message || 'An error occurred during login');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -75,6 +95,18 @@ const Login = () => {
           </motion.p>
         )}
 
+        {/* Error Message */}
+        {errorMessage && (
+          <motion.p
+            className="text-red-500 text-xs"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            {errorMessage}
+          </motion.p>
+        )}
+
         {/* Login Button */}
         <motion.button
           type="submit"
@@ -83,7 +115,7 @@ const Login = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          <FaLock className="mr-2" /> Login
+          {isLoading ? <LoadingSpinner /> : <FaLock className="mr-2" />} Login
         </motion.button>
       </form>
 
