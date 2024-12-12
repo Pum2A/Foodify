@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { HfInference } from '@huggingface/inference';
 
 // Inicjalizacja Hugging Face Inference API
-const hf = new HfInference(process.env.HUGGING_FACE_API_KEY);
+const hf = new HfInference(process.env.HUGGING_FACE_KEY);
 
 export async function POST(req: NextRequest) {
   const { ingredients, diet, cuisine } = await req.json();

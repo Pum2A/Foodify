@@ -7,10 +7,18 @@ import { FaEnvelope, FaLock, FaUserPlus, FaKey } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import LoadingSpinner from '../components/LoadingSpinner';
+
 const Register = () => {
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<{ name: string; email: string; password: string; confirmPassword: string }>();
+
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const password = watch('password');
   const confirmPassword = watch('confirmPassword');
   const router = useRouter();
@@ -18,22 +26,26 @@ const Register = () => {
   // Regex for special characters in password
   const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
-  const onSubmit = async (data: unknown) => {
+  const onSubmit = async (data: { name: string; email: string; password: string }) => {
     setIsLoading(true);
-    setErrorMessage(null); // Resetujemy błąd przed wysyłką
+    setErrorMessage(null);
+
+    if (!data.name || !data.email || !data.password) {
+      setErrorMessage('All fields are required.');
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const response = await axios.post('/api/register', data);
       if (response.status === 200) {
         console.log('Registration successful', response.data);
-        router.push('/login'); // Przekierowanie po rejestracji
+        router.push('/login');
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Registration failed', error);
-      // Logowanie błędu
       if (error.response) {
-        console.error('Error response:', error.response);
         setErrorMessage(error.response?.data?.message || 'An error occurred during registration');
       } else {
         setErrorMessage('An unexpected error occurred.');
@@ -56,7 +68,29 @@ const Register = () => {
     >
       <h2 className="text-3xl font-bold mb-8">Register</h2>
       <form className="w-full max-w-sm space-y-4" onSubmit={handleSubmit(onSubmit)}>
-        
+        {/* Name Input */}
+        <motion.div
+          className="flex items-center bg-[#222] rounded px-3 py-2"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <FaUserPlus className="text-gray-400 mr-3" />
+          <input
+            type="text"
+            placeholder="Name"
+            {...register('name', {
+              required: 'Name is required',
+              minLength: {
+                value: 3,
+                message: 'Name must be at least 3 characters long',
+              },
+            })}
+            className="w-full bg-transparent text-white focus:outline-none"
+          />
+        </motion.div>
+        {errors.name && <p className="text-red-500 text-xs">{errors.name?.message?.toString()}</p>}
+
         {/* Email Input */}
         <motion.div
           className="flex items-center bg-[#222] rounded px-3 py-2"

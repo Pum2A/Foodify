@@ -1,60 +1,27 @@
-import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
-import { supabase } from '../../lib/supabaseClient';
+// app/api/register/route.ts
+import { auth, db } from "../../lib/firebase";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+export async function POST(req: Request) {
+  const { email, password, name } = await req.json();
 
-export async function POST(req: NextRequest) {
+  if (!email || !password || !name) {
+    return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400 });
+  }
+
   try {
-    const { email, password, login, name } = await req.json();
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-    // Sprawdź, czy email istnieje w bazie danych
-    const { data: existingUser, error: existingUserError } = await supabase
-      .from('users')
-      .select('email')
-      .eq('email', email)
-      .maybeSingle(); // zmiana z .single() na .maybeSingle()
+    await setDoc(doc(collection(db, "users"), userCredential.user.uid), {
+      name,
+      email,
+      createdAt: new Date(),
+    });
 
-    if (existingUserError) {
-      console.error('Error checking existing user:', existingUserError);
-      return NextResponse.json(
-        { message: 'Error checking existing user', error: existingUserError.message },
-        { status: 500 }
-      );
-    }
-
-    if (existingUser) {
-      return NextResponse.json(
-        { message: 'Email already in use' },
-        { status: 400 }
-      );
-    }
-
-    // Szyfruj hasło
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Dodaj nowego użytkownika do bazy danych
-    const { data, error } = await supabase
-      .from('users')
-      .insert([
-        { email, password: hashedPassword, login, name, created_at: new Date() },
-      ]);
-
-    if (error) {
-      console.error('Error inserting user:', error);
-      return NextResponse.json(
-        { message: 'Error inserting user', error: error.message },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(
-      { message: 'User registered successfully', user: data },
-      { status: 201 }
-    );
-  } catch (err) {
-    console.error('Unexpected error:', err);
-    return NextResponse.json(
-      { message: 'Internal server error', error: err },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
+  } catch (error) {
+    console.error("Błąd rejestracji użytkownika:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return new Response(JSON.stringify({ error: errorMessage }), { status: 500 });
   }
 }

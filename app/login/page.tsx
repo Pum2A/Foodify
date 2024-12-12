@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import LoadingSpinner from '../components/LoadingSpinner';
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
