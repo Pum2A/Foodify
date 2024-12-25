@@ -6,7 +6,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 type ItemType = "ingredient" | "diet" | "cuisine";
 
-const Home = () => {
+const RecipeGenerator = () => {
   const [inputs, setInputs] = useState<{ [key in ItemType]: string }>({
     ingredient: "",
     diet: "",
@@ -185,4 +185,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default RecipeGenerator;

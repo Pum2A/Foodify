@@ -132,7 +132,7 @@ const Register = () => {
                 message: 'Password must be at least 6 characters long',
               },
             })}
-            className={`w-full bg-transparent text-white focus:outline-none ${passwordValid ? 'border-2 border-green-500' : ''}`}
+            className={` w-full bg-transparent text-white focus:outline-none ${passwordValid ? 'border-2 border-green-500' : ''}`}
           />
         </motion.div>
         {errors.password && <p className="text-red-500 text-xs">{errors.password?.message?.toString()}</p>}
