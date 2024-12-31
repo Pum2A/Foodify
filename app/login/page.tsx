@@ -28,9 +28,9 @@ const Login = () => {
       const response = await axios.post("/api/login", data);
       if (response.status === 200) {
         console.log("Login successful", response.data);
-        router.push("/home");
+        router.push("/dashboard");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Login failed", error);
       setErrorMessage(error.response?.data?.message || "Login failed");
@@ -47,7 +47,10 @@ const Login = () => {
       transition={{ duration: 0.5 }}
     >
       <h2 className="text-3xl font-bold mb-8">Login</h2>
-      <form className="w-full max-w-sm space-y-4" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="w-full max-w-sm space-y-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {/* Email Input */}
         <motion.div
           className="flex items-center bg-[#222] rounded px-3 py-2"
@@ -62,7 +65,9 @@ const Login = () => {
             className="w-full bg-transparent text-white focus:outline-none"
           />
         </motion.div>
-        {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-red-500 text-xs">{errors.email.message}</p>
+        )}
 
         {/* Password Input */}
         <motion.div
@@ -78,7 +83,9 @@ const Login = () => {
             className="w-full bg-transparent text-white focus:outline-none"
           />
         </motion.div>
-        {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
+        {errors.password && (
+          <p className="text-red-500 text-xs">{errors.password.message}</p>
+        )}
 
         {/* Submit Button */}
         <motion.button
@@ -92,8 +99,12 @@ const Login = () => {
       </form>
 
       {/* Loading and Error Messages */}
-      <div className="my-4">{isLoading && <LoadingSpinner text="Logging in..." />}</div>
-      {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
+      <div className="my-4">
+        {isLoading && <LoadingSpinner text="Logging in..." />}
+      </div>
+      {errorMessage && (
+        <p className="text-red-500 text-sm text-center">{errorMessage}</p>
+      )}
 
       {/* Link to Register */}
       <p className="text-sm mt-4">
