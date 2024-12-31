@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "./contexts/ThemeContext";
-
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,13 +14,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
-
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
-      <body
-      >
-        <ThemeProvider>{children}</ThemeProvider>
-        </body>
+      <body>{children}</body>
     </html>
   );
 }

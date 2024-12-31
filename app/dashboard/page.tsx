@@ -1,123 +1,92 @@
 "use client";
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaHome, FaHistory, FaHeart, FaSignOutAlt, FaUserCircle, FaSun, FaMoon } from "react-icons/fa";
+import {
+  FaHome,
+  FaHistory,
+  FaHeart,
+  FaSignOutAlt,
+  FaUserCircle,
+} from "react-icons/fa";
 import RecipeGenerator from "../home/page";
 
+type Tab = "home" | "history" | "favorites";
+
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("home");
-  const [isDayMode, setIsDayMode] = useState(true);
+  const [activeTab, setActiveTab] = useState<Tab>("home");
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "home":
-        return <RecipeGenerator />;
-      case "history":
-        return <History />;
-      case "favorites":
-        return <Favorites />;
-      default:
-        return null;
-    }
-  };
-
-  const toggleTheme = () => {
-    setIsDayMode((prevMode) => !prevMode);
+  const tabContent: Record<Tab, JSX.Element> = {
+    home: <RecipeGenerator />,
+    history: <Content title="History" message="No history yet!" />,
+    favorites: <Content title="Favorites" message="No favorites added yet!" />,
   };
 
   return (
-    <div
-      className={`min-h-screen flex ${
-        isDayMode
-          ? "bg-gradient-to-br from-[#f9f9f9] to-[#e6e6e6] text-black"
-          : "bg-gradient-to-br from-[#121212] to-[#1e1e1e] text-white"
-      }`}
-    >
-      {/* Sidebar Navigation */}
-      <nav
-        className={`w-64 ${
-          isDayMode ? "bg-gray-200" : "bg-gradient-to-b from-[#2a2a2a] to-[#1e1e1e]"
-        } py-8 px-4 fixed top-0 left-0 bottom-0 flex flex-col items-center justify-between shadow-lg rounded-r-xl`}
-      >
-        {/* User Profile */}
-        <div className="flex flex-col items-center space-y-3 mb-10">
-          <motion.div
-            className="text-white bg-gray-700 p-3 rounded-full shadow-md"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaUserCircle className="text-4xl" />
-          </motion.div>
-          <h2 className="text-lg font-semibold">{isDayMode ? "Good Morning" : "Good Evening"}, John</h2>
-          <button
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-red-500 transition-colors"
-            onClick={() => alert("Logged out!")}
-          >
-            <FaSignOutAlt />
-            Logout
-          </button>
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="flex flex-col space-y-8 w-full">
-          <NavItem
-            isActive={activeTab === "home"}
-            onClick={() => setActiveTab("home")}
-            icon={<FaHome />}
-            label="Home"
-          />
-          <NavItem
-            isActive={activeTab === "history"}
-            onClick={() => setActiveTab("history")}
-            icon={<FaHistory />}
-            label="History"
-          />
-          <NavItem
-            isActive={activeTab === "favorites"}
-            onClick={() => setActiveTab("favorites")}
-            icon={<FaHeart />}
-            label="Favorites"
-          />
-        </div>
-
-        {/* Theme Toggle */}
-        <div className="mt-10 flex items-center gap-4">
-          <button
-            className={`p-3 rounded-full shadow-lg ${
-              isDayMode ? "bg-yellow-400 hover:bg-yellow-500" : "bg-gray-700 hover:bg-gray-600"
-            }`}
-            onClick={toggleTheme}
-            title="Switch Theme"
-          >
-            {isDayMode ? <FaSun className="text-2xl text-white" /> : <FaMoon className="text-2xl text-white" />}
-          </button>
-          <span className="text-gray-500">{isDayMode ? "Day Mode" : "Night Mode"}</span>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="ml-64 flex-grow flex flex-col items-center justify-center px-6 py-8">
-        {renderContent()}
-      </main>
+    <div className="min-h-screen bg-gradient-to-br from-[#121212] to-[#1e1e1e] text-white">
+      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <main className="p-6">{tabContent[activeTab]}</main>
     </div>
   );
 };
 
-const NavItem = ({ isActive, onClick, icon, label }: { isActive: boolean; onClick: () => void; icon: JSX.Element; label: string }) => (
+const Navigation = ({
+  activeTab,
+  setActiveTab,
+}: {
+  activeTab: Tab;
+  setActiveTab: (tab: Tab) => void;
+}) => {
+  const tabs = [
+    { id: "home", label: "Home", icon: <FaHome /> },
+    { id: "history", label: "History", icon: <FaHistory /> },
+    { id: "favorites", label: "Favorites", icon: <FaHeart /> },
+  ];
+
+  return (
+    <nav className="flex flex-col md:flex-row items-center justify-between bg-gradient-to-l from-[#2a2a2a] to-[#1e1e1e] py-4 px-6">
+      <div className="flex flex-col md:flex-row md:space-x-8 space-y-4 md:space-y-0 w-full md:w-auto">
+        {tabs.map(({ id, label, icon }) => (
+          <NavItem
+            key={id}
+            isActive={activeTab === id}
+            onClick={() => setActiveTab(id as Tab)}
+            icon={icon}
+            label={label}
+          />
+        ))}
+      </div>
+      <div className="flex items-center space-x-4 mt-4 md:mt-0">
+        <IconButton icon={<FaUserCircle />} />
+        <IconButton icon={<FaSignOutAlt />} colorHover="hover:text-red-500" />
+      </div>
+    </nav>
+  );
+};
+
+const NavItem = ({
+  isActive,
+  onClick,
+  icon,
+  label,
+}: {
+  isActive: boolean;
+  onClick: () => void;
+  icon: JSX.Element;
+  label: string;
+}) => (
   <motion.div
     className={`flex items-center gap-4 px-4 py-3 w-full rounded-lg cursor-pointer ${
-      isActive ? "bg-blue-600 text-white shadow-lg" : "text-gray-400 hover:bg-gray-700 hover:text-white"
+      isActive
+        ? "bg-blue-600 text-white shadow-lg"
+        : "text-gray-400 hover:bg-gray-700 hover:text-white"
     }`}
     onClick={onClick}
-    whileHover={{ scale: 1.05 }}
+    whileHover={{ scale: 0.97 }}
     whileTap={{ scale: 0.95 }}
   >
     <motion.div
       className="text-2xl"
-      animate={{
-        rotate: isActive ? 360 : 0,
-      }}
+      animate={{ rotate: isActive ? 360 : 0 }}
       transition={{ duration: 0.5 }}
     >
       {icon}
@@ -126,27 +95,27 @@ const NavItem = ({ isActive, onClick, icon, label }: { isActive: boolean; onClic
   </motion.div>
 );
 
-const History = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.5 }}
-    className="w-full max-w-lg"
-  >
-    <h2 className="text-3xl font-bold">History</h2>
-    <p className="mt-4 text-gray-400">No history yet!</p>
-  </motion.div>
+const IconButton = ({
+  icon,
+  colorHover = "hover:text-white",
+}: {
+  icon: JSX.Element;
+  colorHover?: string;
+}) => (
+  <button className={`flex items-center text-gray-400 ${colorHover}`}>
+    <span className="text-2xl">{icon}</span>
+  </button>
 );
 
-const Favorites = () => (
+const Content = ({ title, message }: { title: string; message: string }) => (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     transition={{ duration: 0.5 }}
-    className="w-full max-w-lg"
+    className="max-w-lg mx-auto"
   >
-    <h2 className="text-3xl font-bold">Favorites</h2>
-    <p className="mt-4 text-gray-400">No favorites added yet!</p>
+    <h2 className="text-3xl font-bold">{title}</h2>
+    <p className="mt-4 text-gray-400">{message}</p>
   </motion.div>
 );
 

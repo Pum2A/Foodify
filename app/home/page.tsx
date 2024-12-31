@@ -80,12 +80,14 @@ const RecipeGenerator = () => {
 
   return (
     <motion.div
-      className="min-h-screen flex flex-col justify-center items-center bg-[#161616] text-white px-6"
+      className="min-h-screen flex flex-col justify-center items-center  text-white px-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-4xl font-bold mb-8 text-center">Create Your Recipe</h2>
+      <h2 className="text-4xl font-bold mb-8 text-center">
+        Create Your Recipe
+      </h2>
       <p className="mb-6 text-gray-400 text-center max-w-md">
         Choose your ingredients, dietary preferences, and let our AI chef
         suggest a perfect recipe!
@@ -98,9 +100,13 @@ const RecipeGenerator = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            {type === "ingredient" && <FaCarrot className="text-orange-500 mr-3" />}
+            {type === "ingredient" && (
+              <FaCarrot className="text-orange-500 mr-3" />
+            )}
             {type === "diet" && <FaTimes className="text-green-500 mr-3" />}
-            {type === "cuisine" && <FaUtensils className="text-yellow-500 mr-3" />}
+            {type === "cuisine" && (
+              <FaUtensils className="text-yellow-500 mr-3" />
+            )}
             <input
               type="text"
               placeholder={`${
@@ -166,10 +172,14 @@ const RecipeGenerator = () => {
           <FaUtensils className="mr-2" /> Generate Recipe
         </motion.button>
       </form>
-      <div className="my-4">{loading && <LoadingSpinner text="Generating your recipe..." /> }</div>
+      <div className="my-4">
+        {loading && <LoadingSpinner text="Generating your recipe..." />}
+      </div>
       {recipes.length > 0 && (
         <div className="my-8 w-full max-w-3xl mx-auto">
-          <h3 className="text-2xl font-semibold mb-4 text-center">Your Recipe</h3>
+          <h3 className="text-2xl font-semibold mb-4 text-center">
+            Your Recipe
+          </h3>
           <div className="bg-[#222] p-6 rounded-lg shadow-lg">
             <ol className="list-decimal list-inside text-gray-300 leading-relaxed">
               {recipes.map((step, index) => (
