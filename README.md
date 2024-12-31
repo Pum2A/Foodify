@@ -1,4 +1,5 @@
 # 🚀 Foodify
+https://my-recipe-app-git-main-pum2as-projects.vercel.app/
 
 ## 🌟 Opis projektu
 
