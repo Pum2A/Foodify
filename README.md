@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Foodify
 
-## Getting Started
+## 🌟 Opis projektu
 
-First, run the development server:
+Aplikacja oparta na **Next.js** z integracją **Firebase** do zarządzania autoryzacją i danymi w czasie rzeczywistym. Celem aplikacji jest wykorzystanie technologii sztucznej inteligencji dostępnej na platformie Hugging Face do automatycznego generowania przepisów kulinarnych. W kolejnych etapach rozwoju aplikacji planowane jest wprowadzenie funkcji umożliwiającej użytkownikom zapisywanie swoich ulubionych przepisów w dedykowanej sekcji "Ulubione".
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🛠️ Technologie
+
+Projekt korzysta z nowoczesnych technologii:
+
+- [Next.js](https://nextjs.org/) – Framework do budowy aplikacji w React.
+- [Firebase](https://firebase.google.com/) – Backend-as-a-Service (BaaS) do zarządzania danymi.
+- [Tailwind CSS](https://tailwindcss.com/) – Framework CSS.
+- [TypeScript](https://www.typescriptlang.org/) – Typowanie w JavaScript.
+- [Vercel](https://vercel.com/) – Hosting aplikacji.
+
+---
+
+## 📂 Struktura projektu
+
+```plaintext
+/
+├── app/                # Główne foldery aplikacji
+│   ├── welcome/        # Strona powitalna
+│   ├── components/     # Komponenty UI
+│   ├── styles/         # Style globalne
+│   ├── layout.tsx      # Layout aplikacji
+│   └── page.tsx        # Strona główna (przekierowująca na /welcome)
+├── public/             # Zasoby publiczne
+├── firebase/           # Konfiguracja Firebase
+├── next.config.js      # Konfiguracja Next.js
+└── package.json        # Zarządzanie zależnościami
 ```
+## 🖥️ Funkcjonalności
+### 🔐 Rejestracja i logowanie (Firebase Authentication)
+### 📝 Zarządzanie treścią (np. dodawanie i edytowanie artykułów)
+### ⭐ Ulubione (zapisywanie treści jako ulubione) <== TODO
+### 📂 Przechowywanie plików (Firebase Storage)
+### 🎨 Responsywny design (Tailwind CSS) <== TODO
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🧑‍💻 Autor
+#### Projekt stworzony przez Pum2A.
+#### Chcesz się skontaktować? Wyślij wiadomość na GitHubie lub w komentarzu do projektu!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🌟 Podziękowania
+#### Next.js za świetny framework.
+#### Firebase za prostą i intuicyjną integrację backendu.
+#### Tailwind CSS za ułatwienie pracy.
