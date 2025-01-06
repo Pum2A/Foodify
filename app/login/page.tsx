@@ -7,8 +7,10 @@ import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useUser } from "../contexts/UserContext";
 
 const Login = () => {
+  const { setUser } = useUser();
   const {
     register,
     handleSubmit,
@@ -28,9 +30,11 @@ const Login = () => {
       const response = await axios.post("/api/login", data);
       if (response.status === 200) {
         console.log("Login successful", response.data);
+        // Save user data to context and local storage
+        setUser(response.data.user);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
         router.push("/dashboard");
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Login failed", error);
       setErrorMessage(error.response?.data?.message || "Login failed");

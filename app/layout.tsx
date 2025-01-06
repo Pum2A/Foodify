@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { UserProvider } from "./contexts/UserContext";
+import { JSX, ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Foodify",
@@ -19,7 +21,9 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <UserProvider>{children}</UserProvider>
+      </body>
     </html>
   );
 }

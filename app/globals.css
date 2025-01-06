@@ -4,48 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Gradient Background Animation */
-@keyframes gradient-flow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  .animate-gradient-flow {
-    background-size: 200% 200%;
-    animation: gradient-flow 8s ease infinite;
-  }
-  
-  /* Glassmorphism Effect */
-  .glassmorphism-container {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 2rem;
-  }
-  
-  /* Input Style */
-  .form-input {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    outline: none;
-    transition: border-color 0.3s ease;
-  }
-  
-  .form-input:focus {
-    border-color: #80d4ff;
-  }
-  
-  /* Button Pulsing Animation */
-  .pulsating-button {
-    background-color: #4F46E5;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .pulsating-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
-  }
-  
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #121212;
+  color: white;
+}
+
+button {
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
