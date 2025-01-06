@@ -8,6 +8,8 @@ import {
 } from "react-icons/fa";
 import NavItem from "./NavItem";
 import IconButton from "./IconButton";
+import { useUser } from "../contexts/UserContext";
+import { useRouter } from "next/navigation";
 
 type Tab = "home" | "history" | "favorites";
 
@@ -22,6 +24,9 @@ const Navigation: React.FC<NavigationProps> = ({
   setActiveTab,
   username,
 }) => {
+  const { logout } = useUser();
+  const router = useRouter();
+
   const tabs = [
     { id: "home", label: "Home", icon: <FaHome /> },
     { id: "history", label: "History", icon: <FaHistory /> },
@@ -30,6 +35,12 @@ const Navigation: React.FC<NavigationProps> = ({
   const [isToggled, setIsToggled] = useState(false);
   const handleToggle = () => {
     setIsToggled((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleToggle();
+    router.push("/login");
   };
 
   return (
@@ -59,7 +70,10 @@ const Navigation: React.FC<NavigationProps> = ({
                   <FaUserCircle className="text-gray-500" />
                   <span>Profile</span>
                 </button>
-                <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2">
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center space-x-2"
+                >
                   <FaSignOutAlt className="text-gray-500" />
                   <span>Logout</span>
                 </button>

@@ -10,6 +10,7 @@ import React, {
 interface UserContextType {
   user: { name: string } | null;
   setUser: (user: { name: string } | null) => void;
+  logout: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -24,8 +25,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, logout }}>
       {children}
     </UserContext.Provider>
   );
