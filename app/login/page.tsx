@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useUser } from "../contexts/UserContext";
 
@@ -35,9 +35,13 @@ const Login = () => {
         localStorage.setItem("user", JSON.stringify(response.data.user));
         router.push("/dashboard");
       }
-    } catch (error: any) {
-      console.error("Login failed", error);
-      setErrorMessage(error.response?.data?.message || "Login failed");
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("Login failed", axiosError);
+      setErrorMessage(
+        (axiosError.response?.data as { message: string })?.message ||
+          "Login failed"
+      );
     } finally {
       setIsLoading(false);
     }

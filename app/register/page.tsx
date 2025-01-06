@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { FaEnvelope, FaLock, FaUserPlus, FaKey } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useUser } from "../contexts/UserContext";
 
 const Register = () => {
+  const { setUser } = useUser();
   const {
     register,
     handleSubmit,
@@ -28,9 +30,6 @@ const Register = () => {
   const confirmPassword = watch("confirmPassword");
   const router = useRouter();
 
-  // Regex for special characters in password
-  const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
-
   const onSubmit = async (data: {
     name: string;
     email: string;
@@ -39,37 +38,25 @@ const Register = () => {
     setIsLoading(true);
     setErrorMessage(null);
 
-    if (!data.name || !data.email || !data.password) {
-      setErrorMessage("All fields are required.");
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const response = await axios.post("/api/register", data);
       if (response.status === 200) {
         console.log("Registration successful", response.data);
-        router.push("/login");
+        setUser(response.data.user);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        router.push("/dashboard");
       }
-    } catch (error: any) {
-      console.error("Registration failed", error);
-      if (error.response) {
-        setErrorMessage(
-          error.response?.data?.message ||
-            "An error occurred during registration"
-        );
-      } else {
-        setErrorMessage("An unexpected error occurred.");
-      }
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("Registration failed", axiosError);
+      setErrorMessage(
+        (axiosError.response?.data as { message: string })?.message ||
+          "Registration failed"
+      );
     } finally {
       setIsLoading(false);
     }
   };
-
-  // Check if the password is valid (has special character and length >= 6)
-  const passwordValid =
-    password && password.length >= 6 && specialCharRegex.test(password);
-  const confirmPasswordValid = confirmPassword && confirmPassword === password;
 
   return (
     <motion.div
@@ -156,7 +143,9 @@ const Register = () => {
               },
             })}
             className={` w-full bg-transparent text-white focus:outline-none ${
-              passwordValid ? "border-2 border-green-500" : ""
+              password && password.length >= 6
+                ? "border-2 border-green-500"
+                : ""
             }`}
           />
         </motion.div>
@@ -183,7 +172,9 @@ const Register = () => {
                 value === password || "Passwords do not match",
             })}
             className={`w-full bg-transparent text-white focus:outline-none ${
-              confirmPasswordValid ? "border-2 border-green-500" : ""
+              confirmPassword && confirmPassword === password
+                ? "border-2 border-green-500"
+                : ""
             }`}
           />
         </motion.div>

@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import RecipeGenerator from "../home/page";
 import Content from "../components/Content";
 import Navigation from "../components/Navigation"; // Import Navigation component
